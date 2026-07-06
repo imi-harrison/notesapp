@@ -58,11 +58,13 @@ export default function App() {
         const imageFile = form.get("image") as File | null;
         console.log(imageFile?.name);
 
+        // Amplify Gen 2 Prettify<> collapses create input fields to string[] incorrectly;
+        // double-cast bypasses the broken inferred index signature.
         const { data: newNote } = await client.models.Note.create({
             name: form.get("name") as string,
             description: form.get("description") as string,
             image: imageFile?.name,
-        });
+        } as unknown as Parameters<typeof client.models.Note.create>[0]);
 
         console.log(newNote);
         if (newNote?.image && imageFile)
